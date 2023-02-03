@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<!-- Jinja template -->
+<!-- please remember the value is valid inside of a scope -->
+<!-- some tricky statement is used to share outside of a scope -->
+<html>
+    <head>
+        <meta charset="UTF-8"></meta> 
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta><!-- traditional way -->
+        <meta name="viewport" content="width=device-width, initial-scale=1"></meta><!-- applicable for mobiles -->
+        
+
+        <style>
+            .margin {
+                margin: 0.5em;
+            }
+            .padding {
+                padding: 1em;
+                font-family: monospace;
+                font-size: large;
+            }
+            .green {
+                color: white;
+                background-color: green;
+            }
+            .gray {
+                color: white;
+                background-color: gray;
+            }
+            .yellow {
+                color: white;
+                background-color:darkgoldenrod;
+            }
+            .message{
+                margin: 30px 20px;
+            }
+            
+        </style>
+
+    </head>
+    <body onload="document.location='#next'; document.getElementById('word').focus();">
+        <!--div>
+        {{ word }}<br/>
+        {{ history }}<br/>
+        {{ message }}<br/>
+        {{ current }}
+        </div-->
+
+        <div class="message">{{ message }}</div>
+        <div>
+        {% set correct_flag = [False] %}
+        {% for hist in history %}
+            <div class="margin">
+            {% for letter in hist %}
+                {% if letter == word[loop.index0] %}
+                    <span class="green padding">{{ letter }}</span>
+                {% elif word.find(letter) == -1  %}
+                    <span class="gray padding">{{ letter }}</span>
+                {% elif word.find(letter) == -1 %}
+                    <span class="gray padding">{{ letter }}</span>
+                {% else %}
+                    <span class="yellow padding">{{ letter }}</span>
+                {% endif %}
+            {% endfor %}
+            </div>
+            <br/>
+            {% if hist == word %}
+            {%   set _ = correct_flag.pop() %}
+            {%   set _ = correct_flag.append(True) %}
+            {% endif %}
+        {% endfor %}
+        </div>
+        {% if correct_flag != [False] %}
+        <form method="GET" action="/logout">
+            <input type="submit" value="Next word"></input>
+        </form>
+        {% elif End == 1 %}
+        <form method="GET" action="/logout">
+            <input type="submit" value="Next word"></input>
+        </form>
+        {% elif correct_flag == [False] %}
+        <a name="next"> </a>
+        <form method="POST" action="/" >
+            <input id="word" type="text" name="query"></input>
+            <input type="submit" value="Wordle?"></input>
+        </form>
+        <form method="GET" action="/logout">
+            <input type="submit" value="Give up!"></input>
+        </form>
+        {% endif %}
+        <div class="message">{{ score }}</div>
+        <form method="GET" action="/rescore">
+            <input type="submit" value="Restart"></input>
+        </form>
+    </body>
+</html>
