@@ -16,7 +16,7 @@ app.permanent_session_lifetime = timedelta(
 @app.route("/rescore", methods=["GET"])
 def rescore():
     session.clear()
-    session["score"] = list()
+    session["score"] = [0, 0, 0, 0, 0, 0, 0]
     return redirect("/")
 
 
@@ -40,6 +40,8 @@ def begin():
             session["word"] = dict_array[random.randint(
                 0, len(dict_array) - 1)]
             session["history"] = list()
+            if session.get("score", None) == None:
+                session["score"] = [0, 0, 0, 0, 0, 0, 0]
 
     except requests.exceptions.RequestException:  # just handle exceptions regarding HTTP
         return Response("Something went wrong to retrieve data", mimetype='text/plain')
@@ -55,7 +57,10 @@ def ontheway():
     try:
         word = session["word"]
         history = session["history"]
-        score = session["score"]
+        try:
+            score = session["score"]
+        except:
+            rescore()
 
         # check word length
         if len(query) != len(word):
@@ -76,7 +81,9 @@ def ontheway():
         if query == word:
             session.pop('word', default=None)
             session.pop('history', default=None)
-            score.append(len(history))
+            # score.append(len(history))
+            scores = session["score"]
+            scores[len(history)] += 1
             return render_template("wordle.html", current=query, word=word, history=history, message="Correct!", score=score)
         else:
             return render_template("wordle.html", current=query, word=word, history=history, message="Try again!", score=score)

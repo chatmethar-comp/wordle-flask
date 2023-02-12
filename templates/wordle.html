@@ -33,7 +33,25 @@
             .message{
                 margin: 30px 20px;
             }
-            
+            .score{
+                 background-color: #444444;
+                 color: #ffffff;
+                 width: 100%;
+                 margin-left: 0.8rem;
+                 padding: 0.4rem 0.6rem;
+            }
+            .score-row{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 20rem;
+                margin-top: 0.5rem
+            }
+
+            .stat{
+                display:flex;
+                flex-direction: column;
+            }
         </style>
 
     </head>
@@ -87,7 +105,12 @@
             <input type="submit" value="Give up!"></input>
         </form>
         {% endif %}
-        <div class="message">{{ score }}</div>
+        <h2>Statistics</h2>
+        <div class="stat">
+            {% for  i in range(1,7) %}
+                <div class="score-row">{{i}} <span class="score score-{{score[i]}}">{{score[i]}}</span></div>
+            {% endfor %}
+        </div>
         <form method="GET" action="/rescore">
             <input type="submit" value="Restart"></input>
         </form>
