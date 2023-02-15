@@ -10,13 +10,30 @@
         
 
         <style>
+            html{
+                font-size: 1.05rem;
+
+            }
+            body{
+                display: flex;
+                justify-content: center;
+            }
+            body.dark-mode {
+                background-color: #222;
+                color: #fff;
+            }
+            body > * {
+                margin-left: 3rem;
+            }
+
             .margin {
-                margin: 0.5em;
+                margin: 1.5em 1em;
             }
             .padding {
                 padding: 1em;
+                font-size: 2rem;
                 font-family: monospace;
-                font-size: large;
+                margin: 50px 0;
             }
             .green {
                 color: white;
@@ -30,11 +47,16 @@
                 color: white;
                 background-color:darkgoldenrod;
             }
+            .red {
+                color: white;
+                background-color: red;
+            }
             .message{
                 margin: 30px 20px;
+                font-size: 1.2rem;
             }
             .score{
-                 background-color: #444444;
+                 background-color: green;
                  color: #ffffff;
                  width: 100%;
                  margin-left: 0.8rem;
@@ -52,7 +74,28 @@
                 display:flex;
                 flex-direction: column;
             }
+            .acbutton{
+                border-radius: 0.25rem;
+                padding: 0.5rem 1rem;
+                text-transform: uppercase;
+                font-weight: bold;
+                font-size: 1.1rem;
+            }
+            .query{
+                margin: 1rem 0;
+
+            }
+            .dark {
+                background-color: #000;
+                color:white;
+            }
         </style>
+        <script>
+            const toggleTheme = () => {
+                const body = document.querySelector('body');
+                body.classList.toggle('dark-mode');
+            }
+        </script>
 
     </head>
     <body onload="document.location='#next'; document.getElementById('word').focus();">
@@ -63,56 +106,62 @@
         {{ current }}
         </div-->
 
-        <div class="message">{{ message }}</div>
-        <div>
-        {% set correct_flag = [False] %}
-        {% for hist in history %}
-            <div class="margin">
-            {% for letter in hist %}
-                {% if letter == word[loop.index0] %}
-                    <span class="green padding">{{ letter }}</span>
-                {% elif word.find(letter) == -1  %}
-                    <span class="gray padding">{{ letter }}</span>
-                {% elif word.find(letter) == -1 %}
-                    <span class="gray padding">{{ letter }}</span>
-                {% else %}
-                    <span class="yellow padding">{{ letter }}</span>
+        <div class=left>
+            <div class="message">{{ message }}</div>
+            <div>
+            {% set correct_flag = [False] %}
+            {% for hist in history %}
+                <div class="margin">
+                {% for letter in hist %}
+                    {% if letter == word[loop.index0] %}
+                        <span class="green padding">{{ letter }}</span>
+                    {% elif word.find(letter) == -1  %}
+                        <span class="gray padding">{{ letter }}</span>
+                    {% elif word.find(letter) == -1 %}
+                        <span class="gray padding">{{ letter }}</span>
+                    {% else %}
+                        <span class="yellow padding">{{ letter }}</span>
+                    {% endif %}
+                {% endfor %}
+                </div>
+                <br/>
+                {% if hist == word %}
+                {%   set _ = correct_flag.pop() %}
+                {%   set _ = correct_flag.append(True) %}
                 {% endif %}
             {% endfor %}
             </div>
-            <br/>
-            {% if hist == word %}
-            {%   set _ = correct_flag.pop() %}
-            {%   set _ = correct_flag.append(True) %}
+            {% if correct_flag != [False] %}
+            <form method="GET" action="/logout">
+                <input type="submit" value="Next word"></input>
+            </form>
+            {% elif End == 1 %}
+            <form method="GET" action="/logout">
+                <input type="submit" class="acbutton" value="Next word"></input>
+            </form>
+            {% elif correct_flag == [False] %}
+            <a name="next"> </a>
+            <form method="POST" action="/" >
+                <input id="word" type="text" name="query" class="query acbutton"></input>
+                <input type="submit" class="acbutton green" value="Wordle?"></input>
+            </form>
+            <form method="GET" action="/logout">
+                <input type="submit" class="acbutton red" value="Give up!"></input>
+            </form>
             {% endif %}
-        {% endfor %}
+            
         </div>
-        {% if correct_flag != [False] %}
-        <form method="GET" action="/logout">
-            <input type="submit" value="Next word"></input>
-        </form>
-        {% elif End == 1 %}
-        <form method="GET" action="/logout">
-            <input type="submit" value="Next word"></input>
-        </form>
-        {% elif correct_flag == [False] %}
-        <a name="next"> </a>
-        <form method="POST" action="/" >
-            <input id="word" type="text" name="query"></input>
-            <input type="submit" value="Wordle?"></input>
-        </form>
-        <form method="GET" action="/logout">
-            <input type="submit" value="Give up!"></input>
-        </form>
-        {% endif %}
-        <h2>Statistics</h2>
-        <div class="stat">
-            {% for  i in range(1,7) %}
-                <div class="score-row">{{i}} <span class="score score-{{score[i]}}">{{score[i]}}</span></div>
-            {% endfor %}
+        <div>
+            <h2>Statistics</h2>
+            <div class="stat">
+                {% for  i in range(1,7) %}
+                    <div class="score-row">{{i}} <span class="score score-{{score[i]}}">{{score[i]}}</span></div>
+                {% endfor %}
+            </div>
+            <form method="GET" action="/rescore">
+                <input type="submit" class="acbutton margin" value="Restart"></input>
+            </form>
+            <input type="submit" onclick="toggleTheme()" class="acbutton dark" value="Dark Theme"></input>
         </div>
-        <form method="GET" action="/rescore">
-            <input type="submit" value="Restart"></input>
-        </form>
     </body>
 </html>
