@@ -89,6 +89,9 @@
                 background-color: #000;
                 color:white;
             }
+            .ans {
+                font-size: 1.2rem;
+            }
         </style>
         <script>
             const toggleTheme = () => {
@@ -106,7 +109,8 @@
         {{ current }}
         </div-->
 
-        <div class=left>
+        <div class="left">
+
             <div class="message">{{ message }}</div>
             <div>
             {% set correct_flag = [False] %}
@@ -133,9 +137,10 @@
             </div>
             {% if correct_flag != [False] %}
             <form method="GET" action="/logout">
-                <input type="submit" value="Next word"></input>
+                <input type="submit" class="acbutton" value="Next word"></input>
             </form>
             {% elif End == 1 %}
+            <div class="ans">{{ word }}</div>
             <form method="GET" action="/logout">
                 <input type="submit" class="acbutton" value="Next word"></input>
             </form>
@@ -153,7 +158,7 @@
         </div>
         <div>
             <h2>Statistics</h2>
-            <div class="stat">
+            <div class="">
                 {% for  i in range(1,7) %}
                     <div class="score-row">{{i}} <span class="score score-{{score[i]}}">{{score[i]}}</span></div>
                 {% endfor %}

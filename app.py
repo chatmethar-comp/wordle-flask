@@ -74,9 +74,6 @@ def ontheway():
         # check word is valid!
         history.append(query)
         session["history"] = history
-        if len(history) == 6:
-            return render_template("wordle.html", current=query, word=word,
-                                   history=history, message="Game OVER!!", End=1, score=score)
 
         if query == word:
             session.pop('word', default=None)
@@ -86,6 +83,9 @@ def ontheway():
             scores[len(history)] += 1
             return render_template("wordle.html", current=query, word=word, history=history, message="Correct!", score=score)
         else:
+            if len(history) == 6:
+                return render_template("wordle.html", current=query, word=word,
+                                       history=history, message="Game OVER!!", End=1, score=score)
             return render_template("wordle.html", current=query, word=word, history=history, message="Try again!", score=score)
     except Exception as e:
         print(e)
